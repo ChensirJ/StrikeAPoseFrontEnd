@@ -4,15 +4,15 @@ module.exports = function(app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'http://172.31.178.187:8000/api/v1',
+      target: 'http://172.31.178.187:8000',
       changeOrigin: true,
-      secure: false,
-      ws: true,
-      xfwd: true,
-      onProxyRes: function (proxyRes, req, res) {
-        proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+      pathRewrite: {
+        '^/api': '/api/v1',
       },
-      onError: (err, req, res) => {
+      onProxyReq: function(proxyReq, req, res) {
+        console.log('代理请求:', req.method, req.url);
+      },
+      onError: function(err, req, res) {
         console.error('代理错误:', err);
       }
     })
